@@ -1,5 +1,7 @@
 # Standard Unix
 
+DESTDIR ?= /usr/local
+
 TARGET = vlink
 DIR = objects
 
@@ -12,6 +14,10 @@ LD = gcc
 LDOUT = -o $(DUMMYVARIABLE)	# produces the string "-o "
 LDOPTS =
 LIBS =
-
+INSTALL = install
 
 include make.rules
+
+install: vlink vlink.pdf
+	$(INSTALL) -D vlink $(DESTDIR)/bin/vlink
+	$(INSTALL) -D vlink.pdf $(DESTDIR)/share/doc/vlink/vlink.pdf
