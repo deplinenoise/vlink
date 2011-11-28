@@ -7,10 +7,15 @@ vlinkobjects = $(DIR)/main.o $(DIR)/support.o $(DIR)/errors.o \
                $(DIR)/t_aout.o $(DIR)/t_aoutnull.o $(DIR)/t_aoutm68k.o \
                $(DIR)/t_aouti386.o $(DIR)/t_aoutmint.o $(DIR)/t_ataritos.o \
                $(DIR)/t_rawbin.o $(DIR)/t_vobj.o
+all: $(TARGET)
 
 $(TARGET): $(vlinkobjects)
 	$(CC) $(CCOUT)$(DIR)/version.o $(COPTS) $(CONFIG) version.c
 	$(LD) $(LDOUT)$(TARGET) $(LDOPTS) $(vlinkobjects) $(DIR)/version.o $(LIBS)
+
+clean:
+	rm -f $(TARGET)
+	find . -name \*.o -exec rm {} \;
 
 vlink.pdf: vlink.texi
 	texi2dvi --pdf vlink.texi
