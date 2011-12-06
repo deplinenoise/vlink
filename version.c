@@ -98,6 +98,7 @@ void show_usage(void)
          "-sd               merge all data and bss sections\n"
          "-t                trace file accesses by the linker\n"
          "-M                print segment mappings and symbol values\n"
+         "-N                generate machine-readable map data (.map)\n"
          "-n                no page alignment\n"
          "-q                keep relocations in the final executable\n"
          "-r                generate relocatable object\n"

@@ -1687,6 +1687,7 @@ static void writeexec(struct GlobalVars *gv,FILE *f)
 {
   struct LinkedSection *ls = (struct LinkedSection *)gv->lnksec.first;
   struct LinkedSection *nextls;
+  FILE *hunk_map = gv->map_file_newstyle;
   int i=0;
 
   fwrite32be(f,HUNK_HEADER);
@@ -1721,21 +1722,35 @@ static void writeexec(struct GlobalVars *gv,FILE *f)
   /* section loop */
   ls = (struct LinkedSection *)gv->lnksec.first;
   while (nextls = (struct LinkedSection *)ls->n.next) {
+    const char *hunk_typename = "";
     exthunk = symhunk = FALSE;
 
     switch (ls->type) {  /* section type */
       case ST_CODE:
         fwrite32be(f,HUNK_CODE);
+        hunk_typename = "CODE";
         break;
       case ST_DATA:
         fwrite32be(f,HUNK_DATA);
+        hunk_typename = "DATA";
         break;
       case ST_UDATA:
         fwrite32be(f,HUNK_BSS);
+        hunk_typename = "BSS";
         break;
       default:
         ierror("writeexec(): Illegal section type %u",ls->type);
         break;
+    }
+
+    if (hunk_map) {
+      uint32_t offset = 0;
+      struct Symbol *sym = (struct Symbol *)ls->symbols.first;
+      fprintf(hunk_map, "SECTION size=%d type=HUNK_%s\n", (uint32_t) ((ls->size+3) & ~3), hunk_typename);
+      while (sym->n.next) {
+        fprintf(hunk_map, " %s %d\n", sym->name, (uint32_t) sym->value);
+        sym = (struct Symbol*) sym->n.next;
+      }
     }
 
     fix_reloc_addends(gv,ls);
